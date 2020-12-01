@@ -1,6 +1,6 @@
 INC_DIR=weilei_lib
 
-CXX=g++ -O3 -Wall -std=c++11
+CXX=g++ -O3 -Wall -std=c++11 -pthread -march=native -lntl -lgmp -lm
 ITPP=`pkg-config --cflags itpp` `pkg-config --libs itpp`
 object_files=$(INC_DIR)/mm_read.o $(INC_DIR)/mmio.o $(INC_DIR)/mm_write.o $(INC_DIR)/lib.o $(INC_DIR)/dist.o $(INC_DIR)/product_lib.o $(INC_DIR)/bp.o 
 header_files=$(INC_DIR)/mm_read.h $(INC_DIR)/mmio.h $(INC_DIR)/mm_write.h $(INC_DIR)/lib.h $(INC_DIR)/dist.h $(INC_DIR)/product_lib.h $(INC_DIR)/bp.h
@@ -14,6 +14,14 @@ lib:
 #now link object files
 %.out:%.o $(object_files)
 	$(CXX) $(ITPP) -o $@ $< $(object_files)
+
+# cmd=make lib && make $@.o && make $@.out
+# eg: make test.o && make lib && make test.out
+bike:
+        make lib
+	make func.o
+	make main.o
+	$(CXX) $(ITPP) -o bike.out main.o func.o $(object_files)
 
 bicycle:func.cpp main.cpp
 	#g++ -std=c++11 `itpp-config --cflags` -o bicycle.out func.cpp main.cpp  `itpp-config --libs`
